@@ -1,0 +1,4 @@
+#!/bin/sh
+
+ruby lib/app.rb
+
