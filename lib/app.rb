@@ -4,11 +4,25 @@ require 'json'
 
 set :public_folder, __dir__ + '/public'
 
-get '/' do
-  "Welcom <a href='./films'>recent films</a>"
-end
-
 path = "#{__dir__}/films.csv"
+
+get '/' do
+  data = CSV.read(path).map do |r|
+    {
+      id: r[0],
+      title: r[1],
+      description: r[2],
+      release_year: r[3],
+      rental_duration: r[4],
+      rental_rate: r[5],
+      length: r[6],
+      replacement_cost: r[7],
+      rating: r[8],
+      special_features: r[9]
+    }
+  end
+  erb :index, locals: { films: data }
+end
 
 get '/films' do
   data = CSV.read(path).map do |r|

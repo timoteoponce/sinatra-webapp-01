@@ -1,4 +1,37 @@
-<h2>Hello World</h2>
+<h2>Films store</h2>
 <p>
-  The time is now: <%= Time.now %>
+  Welcome to our Film Store!!
 </p>
+
+<table>
+  <thead>
+    <tr>
+      <td>ID</td>
+      <td>Title</td>
+      <td>Description</td>
+      <td>Release year</td>
+      <td>Length</td>
+    </tr>
+  </thead>
+  <tbody>
+  <% films.each do |f| %>
+    <tr>
+      <td>
+        <%= f[:id] %>
+      </td>
+      <td>
+        <%= f[:title] %>
+      </td>
+      <td>
+        <%= f[:description] %>
+      </td>
+      <td>
+        <%= f[:release_year] %>
+      </td>
+      <td>
+        <%= f[:length] %>
+      </td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
