@@ -14,24 +14,58 @@
     </tr>
   </thead>
   <tbody>
-  <% films.each do |f| %>
-    <tr>
-      <td>
-        <%= f[:id] %>
-      </td>
-      <td>
-        <%= f[:title] %>
-      </td>
-      <td>
-        <%= f[:description] %>
-      </td>
-      <td>
-        <%= f[:release_year] %>
-      </td>
-      <td>
-        <%= f[:length] %>
-      </td>
-    </tr>
-    <% end %>
+    <% paginate[:list].each do |f| %>
+      <tr>
+        <td>
+          <%= f[:id] %>
+        </td>
+        <td>
+          <%= f[:title] %>
+        </td>
+        <td>
+          <%= f[:description] %>
+        </td>
+        <td>
+          <%= f[:release_year] %>
+        </td>
+        <td>
+          <%= f[:length] %>
+        </td>
+        <td>
+          <button onclick="onDelete('<%= f[:id]%>')">Delete</button>
+        </td>
+      </tr>
+      <% end %>
   </tbody>
 </table>
+<div class="grid pagination">
+  <a href="./?page=1">
+    <button>First</button>
+  </a>
+  <% unless paginate[:previous_page].nil? %>
+    <a href="./?page=<%= paginate[:previous_page]%>">
+      <button>Previous</button>
+    </a>
+  <% end %>
+  <% unless paginate[:next_page].nil? %>
+  <a href="./?page=<%= paginate[:next_page]%>">
+    <button>Next</button>
+  </a>
+  <% end %>
+  <a href="./?page=<%= paginate[:last_page]%>">
+    <button>Last</button>
+  </a>
+</div>
+
+<script>
+  const onDelete = (id) => {
+    if (window.confirm(`Do you really want to delete the film '${id}'`)) {
+      fetch(`./films/${id}`, {
+        method: "DELETE"
+      })
+        .then(_ => window.location.reload())
+        .catch(e => window.alert(`Couldn't delete the film: ${e}`));
+    }
+
+  };
+</script>

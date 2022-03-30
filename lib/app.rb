@@ -21,7 +21,19 @@ get '/' do
       special_features: r[9]
     }
   end
-  erb :index, locals: { films: data }
+  paginate = paginate(data, params['page'] || '1')
+  erb :index, locals: { paginate: paginate }
+end
+
+def paginate(items, page_str)
+  page = page_str.to_i
+  total = items.length
+  per_page = 10
+  last_page = total / per_page
+  from = (page - 1) * per_page
+  next_page = (page + 1) <= last_page ? page + 1 : nil
+  previous_page = (page - 1).zero? ? nil : page - 1
+  { list: items.slice(from, per_page), last_page: last_page, next_page: next_page, previous_page: previous_page }
 end
 
 get '/films' do
@@ -73,7 +85,7 @@ delete '/films/:id' do
         csv << r
       end
     end
-    msg = "Successfully removed item #{params['id']}"
+    puts "Successfully removed item #{params['id']}"
     puts msg
     msg
   end
