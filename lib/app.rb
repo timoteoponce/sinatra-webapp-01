@@ -73,7 +73,7 @@ get '/films' do
       special_features: r[9]
     }
   end
-  puts "Returning '#{data.length}' items"
+  logger.info "Returning '#{data.length}' items"
   content_type :json
   data.to_json
 end
@@ -87,7 +87,7 @@ post '/films' do
       csv << payload.values
     end
     msg = "Stored new item #{payload}"
-    puts msg
+    logger.info msg
     msg
   else
     status 400
@@ -111,7 +111,7 @@ put '/films' do
       end
     end
     msg = "Stored item #{payload}"
-    puts msg
+    logger.info msg
     msg
   end
 end
@@ -129,7 +129,7 @@ delete '/films/:id' do
       end
     end
     msg = "Successfully removed item #{params['id']}"
-    puts msg
+    logger.info msg
     msg
   end
 end
