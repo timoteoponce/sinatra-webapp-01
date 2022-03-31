@@ -21,12 +21,30 @@ get '/' do
       special_features: r[9]
     }
   end
+  data = data.sort_by { |r| r[:id].to_i }
   paginate = paginate(data, params['page'] || '1')
   erb :index, locals: { paginate: paginate }
 end
 
 get '/new' do
   erb :new
+end
+
+get '/edit' do
+  r = CSV.read(path).find { |r| r[0] == params['id'] }
+  item = {
+    id: r[0],
+    title: r[1],
+    description: r[2],
+    release_year: r[3],
+    rental_duration: r[4],
+    rental_rate: r[5],
+    length: r[6],
+    replacement_cost: r[7],
+    rating: r[8],
+    special_features: r[9]
+  }
+  erb :edit, locals: { item: item }
 end
 
 def paginate(items, page_str)
@@ -77,6 +95,27 @@ post '/films' do
   end
 end
 
+put '/films' do
+  payload = JSON.parse(request.body.read)
+  existing = CSV.read(path).find { |r| r[0] == payload['id'] }
+
+  if existing.nil?
+    status 404
+    body "An item with the same ID #{payload['id']} must exists"
+  else
+    data = CSV.read(path).delete_if { |x| x[0] == payload['id'] }
+    data = data << payload.values
+    CSV.open(path, 'w') do |csv|
+      data.each do |r|
+        csv << r
+      end
+    end
+    msg = "Stored item #{payload}"
+    puts msg
+    msg
+  end
+end
+
 delete '/films/:id' do
   existing = CSV.read(path).find { |r| r[0] == params['id'] }
   if existing.nil?
@@ -89,7 +128,7 @@ delete '/films/:id' do
         csv << r
       end
     end
-    puts "Successfully removed item #{params['id']}"
+    msg = "Successfully removed item #{params['id']}"
     puts msg
     msg
   end

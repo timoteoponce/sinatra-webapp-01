@@ -34,6 +34,11 @@
           <%= f[:length] %>
         </td>
         <td>
+          <a href="./edit?id=<%= f[:id]%>">
+            <button>Edit</button>
+          </a>
+        </td>
+        <td>
           <button onclick="onDelete('<%= f[:id]%>')">Delete</button>
         </td>
       </tr>
@@ -65,8 +70,14 @@
       fetch(`./films/${id}`, {
         method: "DELETE"
       })
-        .then(_ => window.location.reload())
-        .catch(e => window.alert(`Couldn't delete the film: ${e}`));
+      .then(r => {
+        if (r.ok) {
+          window.location.reload();
+        } else {
+          window.alert(`Couldn't delete the film: ${r.status}`)
+        }
+      })
+      .catch(e => window.alert(`Couldn't delete the film: ${e}`));
     }
 
   };
