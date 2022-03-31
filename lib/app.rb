@@ -25,6 +25,10 @@ get '/' do
   erb :index, locals: { paginate: paginate }
 end
 
+get '/new' do
+  erb :new
+end
+
 def paginate(items, page_str)
   page = page_str.to_i
   total = items.length
