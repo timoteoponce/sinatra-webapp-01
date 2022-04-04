@@ -25,6 +25,7 @@ GEM
     rack-protection (2.2.0)
       rack
     rainbow (3.1.1)
+    rake (13.0.6)
     regexp_parser (2.2.1)
     reverse_markdown (2.1.1)
       nokogiri
@@ -40,6 +41,8 @@ GEM
       unicode-display_width (>= 1.4.0, < 3.0)
     rubocop-ast (1.16.0)
       parser (>= 3.1.1.0)
+    ruby-debug-ide (0.7.3)
+      rake (>= 0.8.1)
     ruby-progressbar (1.11.0)
     ruby2_keywords (0.0.5)
     sinatra (2.2.0)
@@ -77,6 +80,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  ruby-debug-ide
   sinatra (~> 2.2)
   solargraph
   thin (~> 1.8)
