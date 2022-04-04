@@ -8,6 +8,5 @@ gem "sinatra", "~> 2.2"
 
 gem "thin", "~> 1.8"
 
-group :development do
-    gem 'solargraph'
-end
+gem 'solargraph'
+gem 'ruby-debug-ide'
