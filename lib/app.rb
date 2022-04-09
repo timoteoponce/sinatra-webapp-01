@@ -1,27 +1,15 @@
 require 'sinatra'
-require 'csv'
 require 'json'
+
+require_relative 'vault'
 
 set :public_folder, __dir__ + '/public'
 
-path = "#{__dir__}/films.csv"
+vault = Vault.new
 
 get '/' do
-  data = CSV.read(path).map do |r|
-    {
-      id: r[0],
-      title: r[1],
-      description: r[2],
-      release_year: r[3],
-      rental_duration: r[4],
-      rental_rate: r[5],
-      length: r[6],
-      replacement_cost: r[7],
-      rating: r[8],
-      special_features: r[9]
-    }
-  end
-  data = data.sort_by { |r| r[:id].to_i }
+  data = vault.find_films
+  data = data.sort_by { |r| r['id'].to_i }
   paginate = paginate(data, params['page'] || '1')
   erb :index, locals: { paginate: paginate }
 end
@@ -31,19 +19,7 @@ get '/new' do
 end
 
 get '/edit' do
-  r = CSV.read(path).find { |r| r[0] == params['id'] }
-  item = {
-    id: r[0],
-    title: r[1],
-    description: r[2],
-    release_year: r[3],
-    rental_duration: r[4],
-    rental_rate: r[5],
-    length: r[6],
-    replacement_cost: r[7],
-    rating: r[8],
-    special_features: r[9]
-  }
+  item = vault.find_films.find { |f| f['id'] == params['id'] }
   erb :edit, locals: { item: item }
 end
 
@@ -59,20 +35,7 @@ def paginate(items, page_str)
 end
 
 get '/films' do
-  data = CSV.read(path).map do |r|
-    {
-      id: r[0],
-      title: r[1],
-      description: r[2],
-      release_year: r[3],
-      rental_duration: r[4],
-      rental_rate: r[5],
-      length: r[6],
-      replacement_cost: r[7],
-      rating: r[8],
-      special_features: r[9]
-    }
-  end
+  data = vault.find_films
   logger.info "Returning '#{data.length}' items"
   content_type :json
   data.to_json
@@ -80,12 +43,10 @@ end
 
 post '/films' do
   payload = JSON.parse(request.body.read)
-  existing = CSV.read(path).find { |r| r[0] == payload['id'] }
+  existing = vault.find_films.find { |f| f['payload'] == payload['id'] }
 
   if existing.nil?
-    CSV.open(path, 'a') do |csv|
-      csv << payload.values
-    end
+    store_film(payload)
     msg = "Stored new item #{payload}"
     logger.info msg
     msg
@@ -97,19 +58,13 @@ end
 
 put '/films' do
   payload = JSON.parse(request.body.read)
-  existing = CSV.read(path).find { |r| r[0] == payload['id'] }
+  existing = vault.find_films.find { |f| f['id'] == payload['id'] }
 
   if existing.nil?
     status 404
     body "An item with the same ID #{payload['id']} must exists"
   else
-    data = CSV.read(path).delete_if { |x| x[0] == payload['id'] }
-    data = data << payload.values
-    CSV.open(path, 'w') do |csv|
-      data.each do |r|
-        csv << r
-      end
-    end
+    update_film(payload)
     msg = "Stored item #{payload}"
     logger.info msg
     msg
@@ -117,17 +72,11 @@ put '/films' do
 end
 
 delete '/films/:id' do
-  existing = CSV.read(path).find { |r| r[0] == params['id'] }
-  if existing.nil?
+  deleted = vault.delete_film_by_id(params['id'])
+  if !deleted
     status 404
     body "Item not found #{params['id']}"
   else
-    data = CSV.read(path).delete_if { |x| x[0] == params['id'] }
-    CSV.open(path, 'w') do |csv|
-      data.each do |r|
-        csv << r
-      end
-    end
     msg = "Successfully removed item #{params['id']}"
     logger.info msg
     msg
