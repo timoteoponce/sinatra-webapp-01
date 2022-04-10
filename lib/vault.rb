@@ -2,11 +2,10 @@ require 'csv'
 require_relative 'film'
 
 class Vault
-
   PATH = "#{__dir__}/films.csv"
 
   def find_films
-    CSV.read(PATH).map { |r| Film.from_csv(r) }
+    CSV.read(PATH).map { |r| Film.from_array(r) }
   end
 
   def delete_film_by_id(id)
@@ -27,7 +26,7 @@ class Vault
 
   def update_film(film)
     data = CSV.read(PATH).delete_if { |x| x[0] == film.id }
-    data = data << film.to_csv
+    data = data << film.to_array
     CSV.open(PATH, 'w') do |csv|
       data.each do |r|
         csv << r
@@ -37,7 +36,7 @@ class Vault
 
   def store_film(film)
     CSV.open(PATH, 'a') do |csv|
-      csv << film.to_csv
+      csv << film.to_array
     end
   end
 end

@@ -1,7 +1,6 @@
 require_relative 'vault'
 
 class Service
-
   def initialize
     @vault = Vault.new
   end

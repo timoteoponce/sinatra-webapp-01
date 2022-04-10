@@ -29,11 +29,11 @@ get '/films' do
   data = service.find_films
   logger.info "Returning '#{data.length}' items"
   content_type :json
-  data.to_json
+  data.to_hash
 end
 
 post '/films' do
-  film = Film.from_json(JSON.parse(request.body.read))  
+  film = Film.from_hash(JSON.parse(request.body.read))
   result = service.save_film(film)
 
   if result[0].nil?
@@ -47,7 +47,7 @@ post '/films' do
 end
 
 put '/films' do
-  film = Film.from_json(JSON.parse(request.body.read))  
+  film = Film.from_hash(JSON.parse(request.body.read))
   result = service.update_film(film)
 
   if result[0].nil?
@@ -63,7 +63,7 @@ end
 delete '/films/:id' do
   id = params['id']
   result = service.delete_film_by_id(id)
-  
+
   if result[0]
     msg = "Successfully removed item #{id}"
     logger.info msg
