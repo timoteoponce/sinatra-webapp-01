@@ -19,27 +19,27 @@
     <% paginate[:list].each do |f| %>
       <tr>
         <td>
-          <%= f[:id] %>
+          <%= f.id %>
         </td>
         <td>
-          <%= f[:title] %>
+          <%= f.title %>
         </td>
         <td>
-          <%= f[:description] %>
+          <%= f.description %>
         </td>
         <td>
-          <%= f[:release_year] %>
+          <%= f.release_year %>
         </td>
         <td>
-          <%= f[:length] %>
+          <%= f.length %>
         </td>
         <td>
-          <a href="./edit?id=<%= f[:id]%>">
+          <a href="./edit?id=<%= f.id%>">
             <button>Edit</button>
           </a>
         </td>
         <td>
-          <button onclick="onDelete('<%= f[:id]%>')">Delete</button>
+          <button onclick="onDelete('<%= f.id%>')">Delete</button>
         </td>
       </tr>
       <% end %>

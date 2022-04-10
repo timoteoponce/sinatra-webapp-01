@@ -1,15 +1,16 @@
 require 'sinatra'
 require 'json'
 
-require_relative 'vault'
+require_relative 'service'
+require_relative 'film'
 
 set :public_folder, __dir__ + '/public'
 
-vault = Vault.new
+service = Service.new
 
 get '/' do
-  data = vault.find_films
-  data = data.sort_by { |r| r['id'].to_i }
+  data = service.find_films
+  data = data.sort_by { |r| r.id.to_i }
   paginate = paginate(data, params['page'] || '1')
   erb :index, locals: { paginate: paginate }
 end
@@ -19,8 +20,58 @@ get '/new' do
 end
 
 get '/edit' do
-  item = vault.find_films.find { |f| f['id'] == params['id'] }
+  item = service.find_films_by_id(params['id'])
+  puts "edit #{item}"
   erb :edit, locals: { item: item }
+end
+
+get '/films' do
+  data = service.find_films
+  logger.info "Returning '#{data.length}' items"
+  content_type :json
+  data.to_json
+end
+
+post '/films' do
+  film = Film.from_json(JSON.parse(request.body.read))  
+  result = service.save_film(film)
+
+  if result[0].nil?
+    status 400
+    body result[1]
+  else
+    msg = "Stored new item #{result[0]}"
+    logger.info msg
+    msg
+  end
+end
+
+put '/films' do
+  film = Film.from_json(JSON.parse(request.body.read))  
+  result = service.update_film(film)
+
+  if result[0].nil?
+    status 404
+    body result[1]
+  else
+    msg = "Updated item #{result[0]}"
+    logger.info msg
+    msg
+  end
+end
+
+delete '/films/:id' do
+  id = params['id']
+  result = service.delete_film_by_id(id)
+  
+  if result[0]
+    msg = "Successfully removed item #{id}"
+    logger.info msg
+    msg
+  else
+    status 404
+    body "Item not found #{id}"
+  end
 end
 
 def paginate(items, page_str)
@@ -32,53 +83,4 @@ def paginate(items, page_str)
   next_page = (page + 1) <= last_page ? page + 1 : nil
   previous_page = (page - 1).zero? ? nil : page - 1
   { list: items.slice(from, per_page), last_page: last_page, next_page: next_page, previous_page: previous_page }
-end
-
-get '/films' do
-  data = vault.find_films
-  logger.info "Returning '#{data.length}' items"
-  content_type :json
-  data.to_json
-end
-
-post '/films' do
-  payload = JSON.parse(request.body.read)
-  existing = vault.find_films.find { |f| f['payload'] == payload['id'] }
-
-  if existing.nil?
-    store_film(payload)
-    msg = "Stored new item #{payload}"
-    logger.info msg
-    msg
-  else
-    status 400
-    body "An item with the same ID #{payload['id']} already exists"
-  end
-end
-
-put '/films' do
-  payload = JSON.parse(request.body.read)
-  existing = vault.find_films.find { |f| f['id'] == payload['id'] }
-
-  if existing.nil?
-    status 404
-    body "An item with the same ID #{payload['id']} must exists"
-  else
-    update_film(payload)
-    msg = "Stored item #{payload}"
-    logger.info msg
-    msg
-  end
-end
-
-delete '/films/:id' do
-  deleted = vault.delete_film_by_id(params['id'])
-  if !deleted
-    status 404
-    body "Item not found #{params['id']}"
-  else
-    msg = "Successfully removed item #{params['id']}"
-    logger.info msg
-    msg
-  end
 end
