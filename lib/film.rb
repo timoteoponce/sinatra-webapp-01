@@ -35,4 +35,19 @@ class Film
   def self.from_hash(hash)
     Film.new(*hash.values)
   end
+
+  def to_hash
+    {
+      'id' => id,
+      'title' => title,
+      'description' => description,
+      'release_year' => release_year,
+      'rental_duration' => rental_duration,
+      'rental_rate' => rental_rate,
+      'length' => length,
+      'replacement_cost' => replacement_cost,
+      'rating' => rating,
+      'special_features' => special_features
+    }
+  end
 end

@@ -1,42 +1,32 @@
-require 'csv'
 require_relative 'film'
 
+##
+# Vault component that defines the contractual operations to perform any kind of film persistence
 class Vault
-  PATH = "#{__dir__}/films.csv"
-
+  ##
+  # Finds all films persisted, returns an empty array in the case of empty data
   def find_films
-    CSV.read(PATH).map { |r| Film.from_array(r) }
+    raise 'Not implemented'
   end
 
-  def delete_film_by_id(id)
-    original = CSV.read(PATH)
-    data = original.reject { |x| x[0] == id }
-
-    if original.length == data.length
-      false
-    else
-      CSV.open(PATH, 'w') do |csv|
-        data.each do |r|
-          csv << r
-        end
-      end
-      true
-    end
+  ##
+  # Deletes a given film from the persisted entries
+  # @param **_id** film ID (number) of the entry to delete
+  def delete_film_by_id(_id)
+    raise 'Not implemented'
   end
 
-  def update_film(film)
-    data = CSV.read(PATH).delete_if { |x| x[0] == film.id }
-    data = data << film.to_array
-    CSV.open(PATH, 'w') do |csv|
-      data.each do |r|
-        csv << r
-      end
-    end
+  ##
+  # Updates the persisted values of a given film
+  # @param **_film** Film to update, its **id** must not be null
+  def update_film(_film)
+    raise 'Not implemented'
   end
 
-  def store_film(film)
-    CSV.open(PATH, 'a') do |csv|
-      csv << film.to_array
-    end
+  ##
+  # Stores a given film into the persistence target
+  # @param **_film** Film to store, its **id** must not be null
+  def store_film(_film)
+    raise 'Not implemented'
   end
 end

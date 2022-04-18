@@ -1,8 +1,8 @@
-require_relative 'vault'
+require_relative 'vault_json'
 
 class Service
   def initialize
-    @vault = Vault.new
+    @vault = VaultJson.new
   end
 
   def find_films
