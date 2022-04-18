@@ -3,10 +3,15 @@ require 'json'
 
 require_relative 'service'
 require_relative 'film'
+require_relative 'event/event_service'
+require_relative 'event/event_logger'
 
 set :public_folder, __dir__ + '/public'
 
 service = Service.new
+event_service = EventService.new
+event_service.add_handler(service)
+event_service.add_handler(EventLogger.new)
 
 get '/' do
   data = service.find_films

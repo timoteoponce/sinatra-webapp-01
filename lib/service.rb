@@ -1,9 +1,9 @@
 require_relative 'vault_json'
-require_relative 'vault_memory'
+require_relative 'event/event_handler'
 
-class Service
+class Service < EventHandler
   def initialize
-    @vault = VaultMemory.new
+    @vault = VaultJson.new
   end
 
   def find_films
@@ -19,6 +19,7 @@ class Service
 
     if existing.nil?
       @vault.store_film(film)
+      publish('service', "new film stored #{film}")
       [film, nil]
     else
       [nil, "An item with the same ID #{film.id} already exists"]
@@ -32,6 +33,7 @@ class Service
       [nil, "An item with ID #{film.id} is missing"]
     else
       @vault.update_film(film)
+      publish('service', "Film updated #{film}")
       [film, nil]
     end
   end
@@ -39,9 +41,14 @@ class Service
   def delete_film_by_id(id)
     deleted = @vault.delete_film_by_id(id)
     if deleted
+      publish('service', "Film deleted #{id}")
       [true, nil]
     else
       [false, "Item not found #{id}"]
     end
+  end
+
+  def handle(event)
+    # doing nothing
   end
 end
