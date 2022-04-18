@@ -18,8 +18,7 @@ class VaultJson < Vault
 
   def delete_film_by_id(id)
     original = find_films
-    data = original.reject { |f| f.id.to_s == id }
-    puts("data #{original[0].id} #{original.length} #{data.length}")
+    data = original.reject { |f| f.id == id }
 
     if original.length == data.length
       false
@@ -41,6 +40,6 @@ class VaultJson < Vault
 
   private def persist(films)
     data = films.map { |f| f.to_hash }
-    File.write(PATH, 'w', data)
+    File.write(PATH, JSON.generate(data), mode: 'w')
   end
 end
