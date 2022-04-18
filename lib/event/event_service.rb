@@ -1,14 +1,19 @@
 class EventService
   def initialize
-    @handlers = []
+    @listeners = []
+    @publishers = []
   end
 
-  def add_handler(handler)
-    handler.bus = self
-    @handlers = @handlers << handler
+  def add_listener(listener)
+    @listeners = @listeners << listener
+  end
+
+  def add_publisher(publisher)
+    publisher.bus = self
+    @publishers = @publishers << publisher
   end
 
   def publish(event)
-    @handlers.each { |h| h.handle(event) }
+    @listeners.each { |h| h.handle(event) }
   end
 end

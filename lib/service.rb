@@ -1,7 +1,7 @@
 require_relative 'vault_json'
 require_relative 'event/event_handler'
 
-class Service < EventHandler
+class Service < EventPublisher
   def initialize
     @vault = VaultJson.new
   end
@@ -46,9 +46,5 @@ class Service < EventHandler
     else
       [false, "Item not found #{id}"]
     end
-  end
-
-  def handle(event)
-    # doing nothing
   end
 end

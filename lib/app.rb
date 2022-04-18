@@ -10,8 +10,8 @@ set :public_folder, __dir__ + '/public'
 
 service = Service.new
 event_service = EventService.new
-event_service.add_handler(service)
-event_service.add_handler(EventLogger.new)
+event_service.add_publisher(service)
+event_service.add_listener(EventLogger.new)
 
 get '/' do
   data = service.find_films

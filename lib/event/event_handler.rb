@@ -1,12 +1,17 @@
 require_relative 'event'
 
-class EventHandler
+# listener - listen/read events
+# publisher - publish/emit events
+
+class EventPublisher
   attr_writer :bus
 
   def publish(source, msg)
     @bus.publish(Event.new(source, msg))
   end
+end
 
+class EventListener
   def handle(_event)
     raise 'Not implemented'
   end
