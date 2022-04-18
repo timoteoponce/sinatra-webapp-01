@@ -12,6 +12,7 @@ class Vault
   ##
   # Deletes a given film from the persisted entries
   # @param **_id** film ID (number) of the entry to delete
+  # @return TRUE if the deletion goes fine, FALSE otherwise
   def delete_film_by_id(_id)
     raise 'Not implemented'
   end

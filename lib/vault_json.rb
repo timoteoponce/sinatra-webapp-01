@@ -31,11 +31,13 @@ class VaultJson < Vault
   def update_film(film)
     data = find_films.delete_if { |x| x.id == film.id }
     persist(data << film)
+    nil
   end
 
   def store_film(film)
     data = find_films
     persist(data << film)
+    nil
   end
 
   private def persist(films)

@@ -33,11 +33,13 @@ class VaultCsv < Vault
         csv << r
       end
     end
+    nil
   end
 
   def store_film(film)
     CSV.open(PATH, 'a') do |csv|
       csv << film.to_array
     end
+    nil
   end
 end
