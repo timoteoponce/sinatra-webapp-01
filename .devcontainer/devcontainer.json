@@ -1,0 +1,21 @@
+// See https://aka.ms/vscode-remote/devcontainer.json for format details.
+{
+	"name": "Ruby 3",
+	"dockerFile": "Dockerfile",
+	// Uncomment the next line if you want to publish any ports.
+	"forwardPorts": [4567],
+	// Uncomment the next line if you want to add in default container specific settings.json values
+	"settings": {
+		"solargraph.useBundler": true,
+	},
+	"remoteUser": "vscode",
+	"mounts": [
+		"source=try-ruby-gems,target=/usr/local/bundle/gems,type=volume"
+	],
+	// Uncomment the next line to run commands after the container is created.
+	"postCreateCommand": "sudo chown vscode . && gem install bundler && bundle install",
+	"extensions": [
+		"rebornix.Ruby",
+		"castwide.solargraph"
+	]
+}
